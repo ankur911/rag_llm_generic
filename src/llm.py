@@ -3,7 +3,7 @@ LLM loading and answer generation for RAG pipeline.
 """
 import os
 import logging
-from src.config import LLM_REPO_ID, LLM_TASK, HUGGINGFACEHUB_API_TOKEN
+from src.config import LLM_REPO_ID, LLM_TASK, HUGGINGFACEHUB_API_TOKEN, LOCAL_LLM_ID, LOCAL_LLM_TASK, LOCAL_LLM_MAX_NEW_TOKENS
 
 def get_llm(force_local: bool = True):
     if not force_local:
@@ -24,15 +24,18 @@ def get_llm(force_local: bool = True):
     """
     Robust get_llm:
     - Try Hugging Face Inference endpoint (if HUGGINGFACE_API_TOKEN is set).
-    - If that fails or token is missing, fall back to a local FLAN‑T5 pipeline.
+    - If that fails or token is missing, fall back to a local model pipeline.
     """
     # LOCAL FALLBACK (FLAN-T5)
-    # Local fallback
     from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, pipeline
     from langchain_huggingface import HuggingFacePipeline
-    local_model = os.getenv("LOCAL_LLM_ID", "google/flan-t5-base")
-    tok = AutoTokenizer.from_pretrained(local_model)
-    mdl = AutoModelForSeq2SeqLM.from_pretrained(local_model)
-    gen_pipe = pipeline("text2text-generation", model=mdl, tokenizer=tok, max_new_tokens=256)
-    logging.info("Using local FLAN-T5 model for LLM (fallback mode)")
+    tok = AutoTokenizer.from_pretrained(LOCAL_LLM_ID)
+    mdl = AutoModelForSeq2SeqLM.from_pretrained(LOCAL_LLM_ID)
+    gen_pipe = pipeline(
+        LOCAL_LLM_TASK,
+        model=mdl,
+        tokenizer=tok,
+        max_new_tokens=LOCAL_LLM_MAX_NEW_TOKENS
+    )
+    logging.info(f"Using local model {LOCAL_LLM_ID} for LLM (fallback mode)")
     return HuggingFacePipeline(pipeline=gen_pipe)

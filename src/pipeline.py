@@ -1,12 +1,12 @@
 """
 Pipeline nodes and orchestration for RAG pipeline.
 """
-from src.config import TOP_K_RESULTS, TOXIC_KEYWORDS, PROFANITY_WORDS
+from src.config import TOP_K_RESULTS, TOXIC_KEYWORDS, PROFANITY_WORDS, MAX_CHAR_LEN_RESP, KNOWLEDGE_BASE_NOT_LOADED, NO_DOCS_FOUND, PROMPT_TEMPLATE, PER_DOC_CHARS_ALLOWED, OVERALL_CHARS_ALLOWED
 from langchain_core.prompts import PromptTemplate
 from src.vectorstore import VectorStoreManager
 from src.llm import get_llm
 
-def enforce_char_limit(text: str, limit: int = 140) -> str:
+def enforce_char_limit(text: str, limit: int = MAX_CHAR_LEN_RESP) -> str:
     s = " ".join((text or "").split()).strip()
     if len(s) <= limit:
         return s
@@ -27,23 +27,18 @@ def classify_query(text: str):
 def retrieve_and_generate(manager, llm, query: str) -> dict:
     if manager.vector_store is None:
         if not manager.load():
-            return {"answer": "Knowledge base not loaded.", "sources": []}
+            return {"answer": KNOWLEDGE_BASE_NOT_LOADED, "sources": []}
     retriever = manager.vector_store.as_retriever(search_kwargs={"k": TOP_K_RESULTS})
     docs = retriever.invoke(query)
     if not docs:
-        return {"answer": "I couldn't retrieve relevant context from the knowledge base.", "sources": []}
-    PER_DOC_CHARS = 900
-    OVERALL_CHARS = 2200
+        return {"answer": NO_DOCS_FOUND, "sources": []}
+    PER_DOC_CHARS = PER_DOC_CHARS_ALLOWED
+    OVERALL_CHARS = OVERALL_CHARS_ALLOWED
     context = "\n---\n".join([d.page_content[:PER_DOC_CHARS] for d in docs])[:OVERALL_CHARS]
     sources = sorted({d.metadata.get("source", "Unknown") for d in docs})
-    prompt = PromptTemplate.from_template(
-        "You are a concise, factual assistant. Answer ONLY using the context.\n"
-        "Your ENTIRE answer must be <= 140 characters.\n"
-        "If the answer is not in the context, say so briefly.\n\n"
-        "Context:\n{context}\n\nQuestion:\n{question}\n\nAnswer (<=140 chars):"
-    )
+    prompt = PromptTemplate.from_template(PROMPT_TEMPLATE)
     rag_chain = prompt | llm
     raw = rag_chain.invoke({"context": context, "question": query})
     answer_text = raw.strip() if isinstance(raw, str) else str(raw)
-    answer_text = enforce_char_limit(answer_text, 140)
+    answer_text = enforce_char_limit(answer_text, MAX_CHAR_LEN_RESP)
     return {"answer": answer_text, "sources": list(sources)}
