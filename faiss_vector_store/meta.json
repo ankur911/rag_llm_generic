@@ -1,0 +1,8 @@
+{
+  "embedding_model": "intfloat/multilingual-e5-base",
+  "chunk_size": 400,
+  "chunk_overlap": 80,
+  "sources": [
+    "https://www.who.int/news-room/fact-sheets/detail/infant-and-young-child-feeding"
+  ]
+}

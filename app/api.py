@@ -15,6 +15,7 @@ class QueryResponse(BaseModel):
     answer: str
     sources: list
 
+
 manager = VectorStoreManager()
 llm = get_llm()
 app = FastAPI(title="Scalable RAG API (Robust)", version="3.3.0")

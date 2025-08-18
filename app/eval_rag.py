@@ -16,6 +16,7 @@ from pathlib import Path
 from typing import List, Dict, Any, Optional
 
 from src.vectorstore import VectorStoreManager
+
 from src.llm import get_llm
 from src.pipeline import retrieve_and_generate
 from src.config import (
@@ -109,6 +110,7 @@ def run():
 
     # Init pipeline components
     manager = VectorStoreManager()
+
     if not manager.load():
         raise RuntimeError("Vector store not loaded. Build once via app/main.py (builder).")
     llm = get_llm()

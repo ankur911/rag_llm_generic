@@ -4,9 +4,9 @@ from src.vectorstore import VectorStoreManager
 from src.llm import get_llm
 from src.pipeline import retrieve_and_generate
 
-if __name__ == "__main__":
+def build_or_load_store() -> VectorStoreManager:
     manager = VectorStoreManager()
-    llm = get_llm()
+    print("Embedding model in use:", getattr(manager.embedding_model, "model_name", "unknown"))
     if not manager.load():
         print("--- Running Vector Store Builder (Robust) ---")
         ok = manager.build_and_save(DOCUMENT_SOURCES)
@@ -16,14 +16,21 @@ if __name__ == "__main__":
             print("❌ Failed to build vector store. Check logs above.")
     else:
         print("✅ Vector store loaded.")
+    return manager
+
+if __name__ == "__main__":
+    manager = build_or_load_store()
+    llm = get_llm()
 
     if len(sys.argv) > 1 and sys.argv[1] == "plan-a":
         print("\n--- PLAN-A: Direct RAG test ---")
         query = "List key WHO recommendations for infant and young child feeding."
-        result = retrieve_and_generate(manager, llm, query)
+        result = retrieve_and_generate(manager, llm, query, return_context=True)
         print(f"Query: {query}")
         print(f"Answer: {result['answer']}")
         print(f"Sources: {result['sources']}")
+        print("\n--- Context used ---")
+        print(result.get("context", ""))
 
     elif len(sys.argv) > 1 and sys.argv[1] == "plan-b":
         print("\n--- PLAN-B: API test via FastAPI server ---")
