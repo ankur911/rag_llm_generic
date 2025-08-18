@@ -1,0 +1,362 @@
+[
+  {
+    "id": "A1",
+    "category": "fact_check",
+    "language": "en",
+    "text": "What is the recommended age to start complementary foods?"
+  },
+  {
+    "id": "A2",
+    "category": "fact_check",
+    "language": "en",
+    "text": "How long should exclusive breastfeeding continue?"
+  },
+  {
+    "id": "A3",
+    "category": "fact_check",
+    "language": "en",
+    "text": "When should breastfeeding begin after birth?"
+  },
+  {
+    "id": "A4",
+    "category": "fact_check",
+    "language": "en",
+    "text": "Until what age should breastfeeding continue alongside complementary foods?"
+  },
+  {
+    "id": "A5",
+    "category": "fact_check",
+    "language": "en",
+    "text": "Should infants be given water in the first 6 months?"
+  },
+  {
+    "id": "A6",
+    "category": "fact_check",
+    "language": "en",
+    "text": "How often should infants be breastfed (on demand day and night)?"
+  },
+  {
+    "id": "A7",
+    "category": "fact_check",
+    "language": "en",
+    "text": "Does WHO advise avoiding bottles and pacifiers for infants?"
+  },
+  {
+    "id": "A8",
+    "category": "fact_check",
+    "language": "en",
+    "text": "Which organization recommends exclusive breastfeeding for 6 months?"
+  },
+  {
+    "id": "A9",
+    "category": "fact_check",
+    "language": "en",
+    "text": "Does WHO recommend continued breastfeeding up to two years or beyond?"
+  },
+  {
+    "id": "A10",
+    "category": "fact_check",
+    "language": "en",
+    "text": "Does exclusive breastfeeding include no water and no solids?"
+  },
+  {
+    "id": "B1",
+    "category": "summarization",
+    "language": "en",
+    "text": "Summarize the key WHO recommendations for infant feeding."
+  },
+  {
+    "id": "B2",
+    "category": "summarization",
+    "language": "en",
+    "text": "Give a one-sentence summary of optimal infant feeding per WHO."
+  },
+  {
+    "id": "B3",
+    "category": "summarization",
+    "language": "en",
+    "text": "Briefly state the three pillars: early initiation, exclusivity, and duration."
+  },
+  {
+    "id": "B4",
+    "category": "summarization",
+    "language": "en",
+    "text": "Summarize WHO guidance on when to add complementary foods and for how long to breastfeed."
+  },
+  {
+    "id": "B5",
+    "category": "summarization",
+    "language": "en",
+    "text": "In one line, what is WHO policy on exclusive breastfeeding?"
+  },
+  {
+    "id": "B6",
+    "category": "summarization",
+    "language": "en",
+    "text": "Summarize WHO's stance on bottle feeding and pacifiers for infants."
+  },
+  {
+    "id": "B7",
+    "category": "summarization",
+    "language": "en",
+    "text": "Provide a short summary of on-demand feeding for infants."
+  },
+  {
+    "id": "B8",
+    "category": "summarization",
+    "language": "en",
+    "text": "Summarize WHO guidance for feeding infants under two years."
+  },
+  {
+    "id": "B9",
+    "category": "summarization",
+    "language": "en",
+    "text": "Summarize complementary feeding timing and continuation of breastfeeding."
+  },
+  {
+    "id": "B10",
+    "category": "summarization",
+    "language": "en",
+    "text": "Give a concise overview of WHO recommendations for IYCF."
+  },
+  {
+    "id": "C1",
+    "category": "noisy_grammar",
+    "language": "en",
+    "text": "When should start two feeding complementary foods?"
+  },
+  {
+    "id": "C2",
+    "category": "noisy_grammar",
+    "language": "en",
+    "text": "Exclusive breastfeed at six month is recommended?"
+  },
+  {
+    "id": "C3",
+    "category": "noisy_grammar",
+    "language": "en",
+    "text": "Is breastfeeding should started within birth one hour?"
+  },
+  {
+    "id": "C4",
+    "category": "noisy_grammar",
+    "language": "en",
+    "text": "Complementary feeding begins 6 month with breastfeeding continue beyond?"
+  },
+  {
+    "id": "C5",
+    "category": "noisy_grammar",
+    "language": "en",
+    "text": "Water can given in exclusive feeding first six month?"
+  },
+  {
+    "id": "C6",
+    "category": "noisy_grammar",
+    "language": "en",
+    "text": "Breastfeeding beyond two year is WHO recommend?"
+  },
+  {
+    "id": "C7",
+    "category": "noisy_grammar",
+    "language": "en",
+    "text": "Should pacifiers not used babies?"
+  },
+  {
+    "id": "C8",
+    "category": "noisy_grammar",
+    "language": "en",
+    "text": "Solid introduced at six months with breastfeed together?"
+  },
+  {
+    "id": "C9",
+    "category": "noisy_grammar",
+    "language": "en",
+    "text": "Exclusive breastfeeding means no water or solids right?"
+  },
+  {
+    "id": "C10",
+    "category": "noisy_grammar",
+    "language": "en",
+    "text": "Breastfeed on demand meaning frequent day and night?"
+  },
+  {
+    "id": "D1",
+    "category": "multilingual",
+    "language": "es",
+    "text": "¿Cuándo se deben introducir los alimentos complementarios?"
+  },
+  {
+    "id": "D2",
+    "category": "multilingual",
+    "language": "fr",
+    "text": "Quel est l’âge recommandé pour commencer l’allaitement exclusif ?"
+  },
+  {
+    "id": "D3",
+    "category": "multilingual",
+    "language": "zh",
+    "text": "根据世卫组织，母乳喂养应持续多长时间？"
+  },
+  {
+    "id": "D4",
+    "category": "multilingual",
+    "language": "de",
+    "text": "Wann sollten feste Nahrung eingeführt werden?"
+  },
+  {
+    "id": "D5",
+    "category": "multilingual",
+    "language": "it",
+    "text": "Quando iniziare i cibi complementari secondo l’OMS?"
+  },
+  {
+    "id": "D6",
+    "category": "multilingual",
+    "language": "en",
+    "text": "Should complementary food start at 6 months according to WHO?"
+  },
+  {
+    "id": "D7",
+    "category": "multilingual",
+    "language": "es",
+    "text": "¿La OMS recomienda lactancia exclusiva hasta los seis meses?"
+  },
+  {
+    "id": "D8",
+    "category": "multilingual",
+    "language": "es",
+    "text": "¿Debe iniciarse la lactancia dentro de la primera hora?"
+  },
+  {
+    "id": "D9",
+    "category": "multilingual",
+    "language": "zh",
+    "text": "辅食应与母乳一起持续到2岁以上吗？"
+  },
+  {
+    "id": "D10",
+    "category": "multilingual",
+    "language": "es",
+    "text": "¿La OMS recomienda evitar el uso de biberones?"
+  },
+  {
+    "id": "E1",
+    "category": "semantic_paraphrase",
+    "language": "en",
+    "text": "At what age do health agencies advise beginning solids for infants?"
+  },
+  {
+    "id": "E2",
+    "category": "semantic_paraphrase",
+    "language": "en",
+    "text": "How soon after birth should nursing commence?"
+  },
+  {
+    "id": "E3",
+    "category": "semantic_paraphrase",
+    "language": "en",
+    "text": "Should infants stop breastfeeding before adding solids?"
+  },
+  {
+    "id": "E4",
+    "category": "semantic_paraphrase",
+    "language": "en",
+    "text": "Does WHO support overlapping breast milk with solids until age two?"
+  },
+  {
+    "id": "E5",
+    "category": "semantic_paraphrase",
+    "language": "en",
+    "text": "What is the guidance on pacifier use for early infant feeding?"
+  },
+  {
+    "id": "E6",
+    "category": "semantic_paraphrase",
+    "language": "en",
+    "text": "Is giving water allowed during the first six months?"
+  },
+  {
+    "id": "E7",
+    "category": "semantic_paraphrase",
+    "language": "en",
+    "text": "When does exclusive breastfeeding end per global guidance?"
+  },
+  {
+    "id": "E8",
+    "category": "semantic_paraphrase",
+    "language": "en",
+    "text": "What combination of foods does WHO recommend at six months?"
+  },
+  {
+    "id": "E9",
+    "category": "semantic_paraphrase",
+    "language": "en",
+    "text": "How does WHO view feeding on demand for infants?"
+  },
+  {
+    "id": "E10",
+    "category": "semantic_paraphrase",
+    "language": "en",
+    "text": "Is bottle feeding recommended for newborns per WHO?"
+  },
+  {
+    "id": "F1",
+    "category": "on_topic_outside_context",
+    "language": "en",
+    "text": "Should exclusively breastfed infants receive vitamin D supplements?"
+  },
+  {
+    "id": "F2",
+    "category": "on_topic_outside_context",
+    "language": "en",
+    "text": "Is it acceptable to introduce formula before six months if needed?"
+  },
+  {
+    "id": "F3",
+    "category": "on_topic_outside_context",
+    "language": "en",
+    "text": "What are signs of dehydration in exclusively breastfed babies?"
+  },
+  {
+    "id": "F4",
+    "category": "on_topic_outside_context",
+    "language": "en",
+    "text": "Should infants consume honey before 12 months?"
+  },
+  {
+    "id": "F5",
+    "category": "on_topic_outside_context",
+    "language": "en",
+    "text": "Is microwaving baby food safe?"
+  },
+  {
+    "id": "F6",
+    "category": "on_topic_outside_context",
+    "language": "en",
+    "text": "How should pumped breast milk be stored safely?"
+  },
+  {
+    "id": "F7",
+    "category": "on_topic_outside_context",
+    "language": "en",
+    "text": "What vaccines are recommended at 2 months of age?"
+  },
+  {
+    "id": "F8",
+    "category": "on_topic_outside_context",
+    "language": "en",
+    "text": "How much water should infants drink daily?"
+  },
+  {
+    "id": "F9",
+    "category": "on_topic_outside_context",
+    "language": "en",
+    "text": "Are plant-based milk alternatives appropriate for infants?"
+  },
+  {
+    "id": "F10",
+    "category": "on_topic_outside_context",
+    "language": "en",
+    "text": "How much breast milk does a 3-month-old typically need per day?"
+  }
+]

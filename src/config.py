@@ -36,14 +36,19 @@ PROFANITY_WORDS = {"damn", "shit", "fuck", "bitch", "bastard"}
 """
 LLM_REPO_ID: HuggingFace repo ID for remote LLM.
 LLM_TASK: Task for remote LLM (e.g., text-generation).
-HUGGINGFACEHUB_API_TOKEN: API token for HuggingFace endpoint.
+HUGGINGFACEHUB_API_TOKEN: Set this environment variable to use HuggingFace Inference API.
+If not set, the pipeline will use the local fallback model.
 LOCAL_LLM_ID: Local model ID for fallback.
 LOCAL_LLM_TASK: Local pipeline task (e.g., text2text-generation).
 LOCAL_LLM_MAX_NEW_TOKENS: Max new tokens for local generation.
 """
+
 LLM_REPO_ID = "google/gemma-2b-it"
 LLM_TASK = "text-generation"
 HUGGINGFACEHUB_API_TOKEN = os.getenv("HUGGINGFACEHUB_API_TOKEN", "")
+LLM_TEMPERATURE = float(os.getenv("LLM_TEMPERATURE", "0.1"))
+LLM_MAX_NEW_TOKENS = int(os.getenv("LLM_MAX_NEW_TOKENS", "512"))
+
 LOCAL_LLM_ID = os.getenv("LOCAL_LLM_ID", "google/flan-t5-base")
 LOCAL_LLM_TASK = os.getenv("LOCAL_LLM_TASK", "text2text-generation")
 LOCAL_LLM_MAX_NEW_TOKENS = int(os.getenv("LOCAL_LLM_MAX_NEW_TOKENS", "256"))
@@ -60,11 +65,18 @@ OVERALL_CHARS_ALLOWED: Max chars for overall context.
 MAX_CHAR_LEN_RESP = 140
 KNOWLEDGE_BASE_NOT_LOADED = "Knowledge base not loaded."
 NO_DOCS_FOUND = "I couldn't retrieve relevant context from the knowledge base."
+# PROMPT_TEMPLATE = (
+#     "You are a concise, factual assistant. Answer ONLY using the context.\n"
+#     "Your ENTIRE answer must be <= {MAX_CHAR_LEN_RESP} characters.\n"
+#     "If the answer is not in the context, say so briefly.\n\n"
+#     "Context:\n{context}\n\nQuestion:\n{question}\n\nAnswer (<=140 chars):"
+# )
 PROMPT_TEMPLATE = (
-    "You are a concise, factual assistant. Answer ONLY using the context.\n"
-    "Your ENTIRE answer must be <= 140 characters.\n"
+    f"You are a concise, factual assistant. Answer ONLY using the context.\n"
+    f"Your ENTIRE answer must be <= {MAX_CHAR_LEN_RESP} characters.\n"
     "If the answer is not in the context, say so briefly.\n\n"
-    "Context:\n{context}\n\nQuestion:\n{question}\n\nAnswer (<=140 chars):"
+    "Context:\n{context}\n\nQuestion:\n{question}\n\n"
+    f"Answer (<={MAX_CHAR_LEN_RESP} chars):"
 )
 PER_DOC_CHARS_ALLOWED = 900
 OVERALL_CHARS_ALLOWED = 2200

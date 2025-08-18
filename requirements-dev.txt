@@ -1,0 +1,27 @@
+# requirements-dev.txt
+# Extra tools for evaluation, testing, and development
+
+# Data handling & analysis
+pandas
+numpy
+scipy
+
+# Visualization for eval reports
+matplotlib
+seaborn
+
+# Testing
+pytest
+pytest-cov
+
+# Linting & formatting
+black
+flake8
+isort
+
+# Jupyter notebooks (if you want to explore interactively)
+jupyter
+notebook
+
+# Type checking (optional but good since you use TypedDict)
+mypy
