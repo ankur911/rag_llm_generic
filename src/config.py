@@ -119,6 +119,7 @@ PROMPT_TEMPLATE = (
     "Context:\n{context}\n\nQuestion:\n{question}\n\n"
     f"Answer (<={MAX_CHAR_LEN_RESP} chars):"
 )
+# Problem: The response was too long and included markdown formatting.
 
 PER_DOC_CHARS_ALLOWED = 900
 OVERALL_CHARS_ALLOWED = 1600 # lowering from 2200 to 1600 for better context management
