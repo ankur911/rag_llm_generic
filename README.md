@@ -1,4 +1,4 @@
-# Parenting App RAG Pipeline
+# Genric RAG Pipeline, with WHO page as Source for knowlege basr
 
 ## Objective
 This repository implements a robust, modular Retrieval-Augmented Generation (RAG) pipeline for parenting advice. It supports both CLI and API orchestration, enabling scalable, maintainable, and testable workflows for document retrieval and answer generation.
