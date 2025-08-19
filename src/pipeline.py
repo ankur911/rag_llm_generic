@@ -13,6 +13,17 @@ from src.config import (
     PROMPT_TEMPLATE, PER_DOC_CHARS_ALLOWED, OVERALL_CHARS_ALLOWED,
 )
 
+from src.config import (
+    TOP_K_RESULTS,
+    USE_CONTEXT_COMPRESSION,
+    COMPRESSION_MAX_SENTENCE_CHARS,
+    COMPRESSION_TOPK,
+    RETRIEVAL_FETCH_K,
+    RETRIEVAL_LAMBDA_MULT,
+)
+
+import math
+
 # Optional compression flags (safe defaults if not present in config)
 try:
     from src.config import USE_CONTEXT_COMPRESSION, COMPRESSION_MAX_SENTENCE_CHARS, COMPRESSION_TOPK, RETRIEVAL_FETCH_K
@@ -23,6 +34,23 @@ except Exception:
     RETRIEVAL_FETCH_K = 50
 
 # -------- helpers --------
+
+# Compute the cosine similarity between two vectors.
+def _cosine(a, b):
+    dot = sum(x*y for x, y in zip(a, b))
+    na = math.sqrt(sum(x*x for x in a)); nb = math.sqrt(sum(x*x for x in b))
+    return 0.0 if na == 0 or nb == 0 else dot / (na * nb)
+
+# Remove duplicate lines while preserving order.
+def _dedup_keep_order(lines):
+    kept, seen = [], set()
+    for s in lines:
+        k = s.strip().lower()
+        if k in seen: 
+            continue
+        seen.add(k); kept.append(s.strip())
+    return kept
+
 """
 enforce_min_len(ans, min_chars=10)
 If the model's answer is too short (likely junk), replace it with the canonical 
@@ -66,8 +94,11 @@ def clean_text(s: str) -> str:
     s = re.sub(r"\s+", " ", s)
     return s.strip()
 
+
 """
-Build the context for the LLM by chunking the documents.
+f"Build the context for the LLM by chunking the documents. This involves\n"
+f"splitting the documents into smaller parts that fit within the model's\n"
+f"context window of {TOKEN_LIMIT} for the used \"{get_llm.name()}\" from the config file"
 """
 SENT_SPLIT = re.compile(r'(?<=[.!?])\s+')
 def build_context(docs, per_doc_chars, overall_chars):
@@ -87,6 +118,73 @@ def build_context(docs, per_doc_chars, overall_chars):
             budget -= len(add) + 2
             if budget <= 0: break
     return "\n\n".join(parts).strip()
+
+"""
+Build context using embedding rank - this is a more advanced method
+that ranks sentences based on their relevance to the query by leveraging
+sentence embeddings and cosine similarity.
+"""
+
+def build_context_embed_rank(
+    manager,
+    docs,
+    question: str,
+    per_doc_chars: int,
+    overall_chars: int,
+    top_sentences: int | None = None,
+) -> str:
+    """
+    Build query-focused context by:
+    1) collecting sentence candidates from doc chunks,
+    2) filtering obvious meta/program lines,
+    3) ranking by cosine to the query (same E5 embedder),
+    4) taking top distinct sentences within budget.
+    """
+    # ---- config-derived caps ----
+    TOPN = top_sentences or COMPRESSION_TOPK
+    MAX_SENT_CHARS = COMPRESSION_MAX_SENTENCE_CHARS
+
+    # 1) collect candidate sentences
+    candidates = []
+    for d in docs:
+        chunk = (d.page_content or "")[:per_doc_chars]
+        sentences = [s.strip() for s in SENT_SPLIT.split(chunk) if s.strip()]
+        # basic length filter (avoid tiny fragments)
+        sentences = [clean_text(s) for s in sentences if len(s) >= 30]
+        # 2) filter meta/program lines
+        ban = (
+            "strategy", "programme", "program", "training", "course",
+            "who provides", "who and unicef", "monitoring", "report", "launch"
+        )
+        sentences = [s for s in sentences if not any(b in s.lower() for b in ban)]
+        # cap each sentence length for readability and to reduce prompt bloat
+        sentences = [s[:MAX_SENT_CHARS].rstrip(" ,;:") for s in sentences]
+        candidates.extend(sentences)
+
+    if not candidates:
+        return ""
+
+    # 3) rank by cosine to query using SAME embedder (E5 adds prefixes internally)
+    qv = manager.embedding_model.embed_query(question)
+    sv = manager.embedding_model.embed_documents(candidates)
+    scored = sorted(
+        zip(candidates, sv),
+        key=lambda p: _cosine(p[1], qv),  # cosine similarity
+        reverse=True
+    )
+
+    # 4) keep top distinct lines and pack within overall budget
+    top = _dedup_keep_order([c for c, _ in scored][:max(3, TOPN)])
+    ctx, used = [], 0
+    for s in top:
+        # +1 accounts for the newline join below
+        if used + len(s) + 1 > overall_chars:
+            break
+        ctx.append(s)
+        used += len(s) + 1
+
+    return "\n".join(ctx).strip()
+
 
 # -------- query-focused compression using the SAME QA LLM --------
 @lru_cache(maxsize=1)
@@ -149,8 +247,14 @@ def retrieve_and_generate(manager, llm, query: str, return_context: bool = False
             return {**base, "context": ""} if return_context else base
 
     retriever = manager.vector_store.as_retriever(
-        search_kwargs={"k": TOP_K_RESULTS, "fetch_k": RETRIEVAL_FETCH_K, "mmr": True, "lambda_mult": 0.4}
+        search_kwargs={
+            "k": TOP_K_RESULTS,
+            "fetch_k": RETRIEVAL_FETCH_K,
+            "mmr": True,
+            "lambda_mult": RETRIEVAL_LAMBDA_MULT,
+        }
     )
+
     docs = retriever.invoke(query)
     if not docs:
         base = {"answer": NO_DOCS_FOUND, "sources": []}
@@ -161,8 +265,11 @@ def retrieve_and_generate(manager, llm, query: str, return_context: bool = False
     OVERALL_CHARS = OVERALL_CHARS_ALLOWED
 
     if USE_CONTEXT_COMPRESSION:
-        context = compress_snippets(docs, query, PER_DOC_CHARS, OVERALL_CHARS) or \
-                  build_context(docs, PER_DOC_CHARS, OVERALL_CHARS)
+        context = build_context_embed_rank(
+            manager, docs, query, PER_DOC_CHARS, OVERALL_CHARS, top_sentences=COMPRESSION_TOPK
+        )
+    if not context:
+        context = build_context(docs, PER_DOC_CHARS, OVERALL_CHARS)
     else:
         context = build_context(docs, PER_DOC_CHARS, OVERALL_CHARS)
 

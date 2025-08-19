@@ -64,8 +64,19 @@ LOCAL_LLM_ID: Local instruction-following model for RAG QA.
         - google/paligemma-3b-mix-224
         - Requires a vision-language pipeline; only consider if your RAG uses images.
 """
-LLM_REPO_ID = "google/gemma-2b-it"
-LLM_TASK = "text-generation"
+# LLM_REPO_ID = "google/gemma-2b-it"
+# LLM_TASK = "text-generation"
+# LLM_REPO_ID = "bigscience/mt0-base"      # or "google/flan-t5-base"
+# LLM_TASK = "text2text-generation"
+# LLM_REPO_ID = "google/flan-t5-small"   # try small/base
+# LLM_TASK = "text2text-generation"
+LLM_REPO_ID = "google/flan-t5-small"
+LLM_TASK = "text2text-generation" 
+
+# Control where the LLM runs
+USE_REMOTE_LLM = False  # set True to use Hugging Face (requires token)
+HF_ENDPOINT_URL = None
+
 HUGGINGFACEHUB_API_TOKEN = os.getenv("HUGGINGFACEHUB_API_TOKEN", "")
 LLM_TEMPERATURE = float(os.getenv("LLM_TEMPERATURE", "0.0"))
 LLM_MAX_NEW_TOKENS = int(os.getenv("LLM_MAX_NEW_TOKENS", "512"))
@@ -74,6 +85,7 @@ LLM_MAX_NEW_TOKENS = int(os.getenv("LLM_MAX_NEW_TOKENS", "512"))
 LOCAL_LLM_ID = os.getenv("LOCAL_LLM_ID", "bigscience/mt0-base")
 LOCAL_LLM_TASK = os.getenv("LOCAL_LLM_TASK", "text2text-generation")
 LOCAL_LLM_MAX_NEW_TOKENS = int(os.getenv("LOCAL_LLM_MAX_NEW_TOKENS", "256"))
+
 
 # Summarizer (optional)
 # SUMMARIZER_MODEL_ID = os.getenv("SUMMARIZER_MODEL_ID", "google/pegasus-xsum")  # or "facebook/bart-large-cnn"
@@ -109,17 +121,17 @@ NO_DOCS_FOUND = "I couldn't retrieve relevant context from the knowledge base."
 # Answer: --- - provision of supportive health services with infant and young child feeding counselling during all contacts with caregivers and…
 # Sources: ['https://www.who.int/news-room/fact-sheets/detail/infant-and-young-child-feeding'
 
-# Solutiopn -> extend the template: Tighten the prompt (ban lists/markdown)
-
+# last implementation -> extend the template: Tighten the prompt (ban lists/markdown)
+# Solution ->discovered that the model was mentioning strategies, programs, training, or 'WHO' so controlling that
 PROMPT_TEMPLATE = (
     f"You are a concise, factual assistant. Answer ONLY using the context.\n"
     f"If the answer is not in the context, reply exactly: Not in knowledge base.\n"
-    f"Reply as ONE plain sentence. No bullets, no numbering, no markdown, no '---'.\n"
+    "Reply as ONE plain sentence of concrete recommendations; separate items with semicolons.\n"
+    "Do NOT mention strategies, programmes, training, or 'WHO'. No bullets or markdown.\n"
     f"Your ENTIRE answer must be <= {MAX_CHAR_LEN_RESP} characters.\n\n"
     "Context:\n{context}\n\nQuestion:\n{question}\n\n"
     f"Answer (<={MAX_CHAR_LEN_RESP} chars):"
 )
-# Problem: The response was too long and included markdown formatting.
 
 PER_DOC_CHARS_ALLOWED = 900
 OVERALL_CHARS_ALLOWED = 1600 # lowering from 2200 to 1600 for better context management
@@ -134,8 +146,12 @@ context for the answer LLM. This works for any number of docs and keeps
 the context short and on-target.
 """
 
+# --- Context compression / ranking ---
 USE_CONTEXT_COMPRESSION = True
-COMPRESSION_MAX_SENTENCE_CHARS = 200   # per extracted evidence line
-COMPRESSION_TOPK = 8                   # keep at most N best evidence lines
-RETRIEVAL_FETCH_K = 60                 # widen candidate pool for MMR
-RETRIEVAL_K = TOP_K_RESULTS            # final k (you already set this)
+COMPRESSION_MAX_SENTENCE_CHARS = 200   # cap each evidence line
+COMPRESSION_TOPK = 8                   # keep top-N evidence lines
+
+# --- Retrieval (MMR) ---
+RETRIEVAL_FETCH_K = 80                 # candidate pool size for MMR
+RETRIEVAL_TOP_K = TOP_K_RESULTS        # final k (you already control this)
+RETRIEVAL_LAMBDA_MULT = 0.4            # 0=more diversity, 1=more relevance
