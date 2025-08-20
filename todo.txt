@@ -1,0 +1,17 @@
+# Todo for tomorrow
+
+1.  **Restart VS Code**: Close all VS Code windows completely and reopen the project. This is the most important step to make sure the terminal recognizes the `make` command.
+
+2.  **Open a New Terminal**: Once VS Code restarts, open a new terminal.
+
+3.  **Activate Virtual Environment**: In the new terminal, run the command to activate your venv:
+    ```powershell
+    .venv\Scripts\Activate.ps1
+    ```
+
+4.  **Test `make`**: Run the help command to confirm everything is working:
+    ```powershell
+    make help
+    ```
+
+5.  **(Optional) Fix `clean` command in Makefile**: The `clean` command in the Makefile uses Linux commands (`find`, `rm`). It will not work on Windows. This can be fixed later by replacing it with PowerShell commands like `Get-ChildItem` and `Remove-Item`.
