@@ -39,6 +39,14 @@ This repository implements a robust, modular Retrieval-Augmented Generation (RAG
 5. **Answer Generation**: LLM generates a concise, factual answer, respecting character limits and context.
 6. **Response**: Answer and sources are returned to the user via CLI or API.
 
+## Decoupled Summarization Logic
+To enhance performance on both specific questions and broad summarization requests, the pipeline incorporates a decoupled logic path for summarization tasks.
+
+1.  **Query Classification**: Incoming queries are analyzed for summarization-related keywords (e.g., "summarize," "key points," "overview").
+2.  **Dedicated Prompting**: If a query is identified as a summarization request, it is routed to a specialized prompt template (`SUMMARY_PROMPT_TEMPLATE`) designed to guide the LLM in generating high-quality summaries.
+3.  **Dynamic Token Allocation**: The LLM is dynamically configured with a higher `max_new_tokens` limit and a more generous character limit for summarization tasks. This allows for longer, more comprehensive outputs without being prematurely truncated.
+4.  **Improved Quality**: This dual-path approach ensures that the pipeline can deliver both concise, factual answers to direct questions and detailed, well-structured summaries for broader queries.
+
 ## Setup Instructions
 ### 1. Clone the Repository
 ```powershell
