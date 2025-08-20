@@ -60,7 +60,7 @@ def _build_local_llm():
         do_sample=False,        # deterministic for evals
         num_beams=1,
         truncation=True,
-        min_new_tokens=1, # ← was 8; allow short answers for probes
+        min_new_tokens=20, # ← was 8; allow short answers for probes
         no_repeat_ngram_size=3,
     )
     logging.info(f"Using LOCAL model: {LOCAL_LLM_ID} ({LOCAL_LLM_TASK})")
@@ -98,10 +98,20 @@ def _build_remote_endpoint():
 
 # --------------------- public API ---------------------
 
-def get_llm(force_local: Optional[bool] = None):
+def get_llm(force_local: Optional[bool] = None, is_summary: bool = False):
     """
     Returns a LangChain-compatible LLM with the routing rules described above.
+    Optionally uses different generation parameters for summary tasks.
     """
+    # Recommendation: Adjust token limits for summary tasks
+    if is_summary:
+        # Temporarily override generation parameters for summarization
+        # This is a simple way to handle different task requirements
+        # A more robust solution might involve separate model configurations
+        from src.config import SUMMARY_MAX_NEW_TOKENS
+        _cfg.LOCAL_LLM_MAX_NEW_TOKENS = SUMMARY_MAX_NEW_TOKENS
+        _cfg.LLM_MAX_NEW_TOKENS = SUMMARY_MAX_NEW_TOKENS
+
     # 1) Explicitly forced LOCAL
     if force_local is True:
         return _build_local_llm()

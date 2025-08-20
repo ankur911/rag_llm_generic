@@ -45,6 +45,10 @@ PROFANITY_WORDS: Set of words for profanity detection.
 TOXIC_KEYWORDS = {"kill", "hate", "suicide", "abuse", "stupid", "idiot", "die", "murder"}
 PROFANITY_WORDS = {"damn", "shit", "fuck", "bitch", "bastard"}
 
+# Recommendation 2: Add keywords to detect summary queries
+SUMMARY_KEYWORDS = {"list", "summarize", "summarise", "key points", "main points", "overview"}
+
+
 # === LLM Configuration ===
 """
 LLM_REPO_ID: HuggingFace repo ID for remote LLM.
@@ -99,14 +103,29 @@ LOCAL_LLM_MAX_NEW_TOKENS = int(os.getenv("LOCAL_LLM_MAX_NEW_TOKENS", "256"))
 # SUMMARIZER_MIN_LEN = int(os.getenv("SUMMARIZER_MIN_LEN", "18"))   # avoid 1–2 word outputs
 
 # === Pipeline & Prompt Parameters ===
-"""
-MAX_CHAR_LEN_RESP: Max character length for generated answers.
-KNOWLEDGE_BASE_NOT_LOADED: Message if vector store is not loaded.
-NO_DOCS_FOUND: Message if no docs are retrieved.
-PROMPT_TEMPLATE: Prompt template for RAG answer generation.
-PER_DOC_CHARS_ALLOWED: Max chars per doc in context.
-OVERALL_CHARS_ALLOWED: Max chars for overall context.
-"""
+# """
+# MAX_CHAR_LEN_RESP: Max character length for generated answers.
+# KNOWLEDGE_BASE_NOT_LOADED: Message if vector store is not loaded.
+# NO_DOCS_FOUND: Message if no docs are retrieved.
+# PROMPT_TEMPLATE: Prompt template for RAG answer generation.
+# PER_DOC_CHARS_ALLOWED: Max chars per doc in context.
+# OVERALL_CHARS_ALLOWED: Max chars for overall context.
+# """
+
+# Recommendation_1 ***** flexible prompt to include summarization
+# PROMPT_TEMPLATE = (
+#     f"You are a concise, factual assistant. Use ONLY the context provided.\n"
+#     f"If the answer is not in the context, reply exactly: Not in knowledge base.\n"
+#     "If the user asks for a list, use a brief, bulleted list. Otherwise, answer as a single sentence.\n"
+#     f"Your entire answer must be <= {MAX_CHAR_LEN_RESP} characters.\n\n"
+#     "Context:\n{context}\n\nQuestion:\n{question}\n\n"
+#     f"Answer (<={MAX_CHAR_LEN_RESP} chars):"
+# )
+
+# Recommendation: Add separate length constraints for summary responses
+SUMMARY_MAX_CHAR_LEN_RESP = 350  # Allow more characters for summaries
+SUMMARY_MAX_NEW_TOKENS = 100     # Allow more tokens for summary generation
+
 MAX_CHAR_LEN_RESP = 140
 KNOWLEDGE_BASE_NOT_LOADED = "Knowledge base not loaded."
 NO_DOCS_FOUND = "I couldn't retrieve relevant context from the knowledge base."
@@ -127,12 +146,29 @@ NO_DOCS_FOUND = "I couldn't retrieve relevant context from the knowledge base."
 
 # last implementation -> extend the template: Tighten the prompt (ban lists/markdown)
 # Solution ->discovered that the model was mentioning strategies, programs, training, or 'WHO' so controlling that
-PROMPT_TEMPLATE = (
-    f"You are a concise, factual assistant. Answer ONLY using the context.\n"
+# Recommendation 2: Add a separate prompt for summarization
+SUMMARY_PROMPT_TEMPLATE = (
+    f"You are a concise, factual assistant. Use ONLY the context provided to answer the question.\n"
     f"If the answer is not in the context, reply exactly: Not in knowledge base.\n"
-    "Reply as ONE plain sentence of concrete recommendations; separate items with semicolons.\n"
-    "Do NOT mention strategies, programmes, training, or 'WHO'. No bullets or markdown.\n"
-    f"Your ENTIRE answer must be <= {MAX_CHAR_LEN_RESP} characters.\n\n"
+    "Provide a bulleted list of the key points that directly answer the question.\n"
+    f"Your entire answer must be <= {MAX_CHAR_LEN_RESP} characters.\n\n"
+    "Context:\n{context}\n\nQuestion:\n{question}\n\n"
+    f"Answer (<={MAX_CHAR_LEN_RESP} chars):"
+)
+
+# PROMPT_TEMPLATE = (
+#     f"You are a concise, factual assistant. Use ONLY the context. "
+#     f"If the answer is not in the context, reply exactly: Not in knowledge base.\n"
+#     f"Your entire answer must be <= {MAX_CHAR_LEN_RESP} characters.\n"
+#     "Reply as ONE plain sentence. No bullets, numbering, markdown, or quotes.\n\n"
+#     "Context:\n{context}\n\nQuestion:\n{question}\n\n"
+#     f"Answer (<={MAX_CHAR_LEN_RESP} chars):"
+# )
+PROMPT_TEMPLATE = (
+    f"You are a concise, factual assistant. Use ONLY the context. "
+    f"If the answer is not in the context, reply exactly: Not in knowledge base.\n"
+    f"Your entire answer must be <= {MAX_CHAR_LEN_RESP} characters.\n"
+    "Reply as ONE plain sentence. No bullets, numbering, markdown, or quotes.\n\n"
     "Context:\n{context}\n\nQuestion:\n{question}\n\n"
     f"Answer (<={MAX_CHAR_LEN_RESP} chars):"
 )
@@ -152,10 +188,10 @@ the context short and on-target.
 
 # --- Context compression / ranking ---
 USE_CONTEXT_COMPRESSION = True
-COMPRESSION_MAX_SENTENCE_CHARS = 200   # cap each evidence line
+COMPRESSION_MAX_SENTENCE_CHARS = 240   # cap each evidence sentence
 COMPRESSION_TOPK = 8                   # keep top-N evidence lines
 
 # --- Retrieval (MMR) ---
-RETRIEVAL_FETCH_K = 80                 # candidate pool size for MMR
+RETRIEVAL_FETCH_K = 50                 # broaden candidates for MMR
 RETRIEVAL_TOP_K = TOP_K_RESULTS        # final k (you already control this)
 RETRIEVAL_LAMBDA_MULT = 0.4            # 0=more diversity, 1=more relevance
