@@ -70,12 +70,16 @@ LOCAL_LLM_ID: Local instruction-following model for RAG QA.
 # LLM_TASK = "text2text-generation"
 # LLM_REPO_ID = "google/flan-t5-small"   # try small/base
 # LLM_TASK = "text2text-generation"
-LLM_REPO_ID = "google/flan-t5-small"
-LLM_TASK = "text2text-generation" 
+# LLM_REPO_ID = "google/flan-t5-small"
+# LLM_TASK = "text2text-generation" 
+LLM_REPO_ID = "bigscience/mt0-base"
+LLM_TASK= "text2text-generation"
 
 # Control where the LLM runs
 USE_REMOTE_LLM = False  # set True to use Hugging Face (requires token)
-HF_ENDPOINT_URL = None
+HF_ENDPOINT_URL = None # for local and remote with serverless and 
+#dedicated endpoint like  "https://<your-endpoint>.endpoints.huggingface.cloud"  
+# for remote with dedicated end point
 
 HUGGINGFACEHUB_API_TOKEN = os.getenv("HUGGINGFACEHUB_API_TOKEN", "")
 LLM_TEMPERATURE = float(os.getenv("LLM_TEMPERATURE", "0.0"))

@@ -60,7 +60,7 @@ def _build_local_llm():
         do_sample=False,        # deterministic for evals
         num_beams=1,
         truncation=True,
-        min_new_tokens=8,
+        min_new_tokens=1, # ← was 8; allow short answers for probes
         no_repeat_ngram_size=3,
     )
     logging.info(f"Using LOCAL model: {LOCAL_LLM_ID} ({LOCAL_LLM_TASK})")
