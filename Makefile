@@ -8,7 +8,7 @@ PORT ?= 8000
 .PHONY: help setup dev-setup venv build-vstore plan-a plan-b api eval test lint format typecheck clean freeze health
 
 help: ## Show this help
-	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | sed -E 's/:.*?##/: /' | sort
+	@powershell -Command "Select-String -Path 'Makefile' -Pattern '^[a-zA-Z_-]+:.*?## ' | ForEach-Object { $$_.Line -replace ':.*?## ', ': ' } | Sort-Object"
 
 # -------------------- Setup --------------------
 
