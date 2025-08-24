@@ -3,6 +3,8 @@
   "chunk_size": 400,
   "chunk_overlap": 80,
   "sources": [
-    "https://www.who.int/news-room/fact-sheets/detail/infant-and-young-child-feeding"
+    "https://www.who.int/news-room/fact-sheets/detail/infant-and-young-child-feeding",
+    "data/WHO_RIVM_Infant_Child_Feeding_perplexity.md",
+    "data/netherlands_government_RIVM_guidelines_difference_with_WHO.md"
   ]
 }

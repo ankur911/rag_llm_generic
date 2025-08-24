@@ -18,3 +18,4 @@ lxml
 html5lib
 huggingface_hub[hf_xet]
 trafilatura
+pypdf

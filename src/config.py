@@ -31,8 +31,17 @@ EMBEDDING_MODEL = "intfloat/multilingual-e5-base" # E5, GTE, and BGE were specif
 # EMBEDDING_MODEL = "sentence-transformers/all-MiniLM-L6-v2" # English model
 
 DOCUMENT_SOURCES = [
-    "https://www.who.int/news-room/fact-sheets/detail/infant-and-young-child-feeding"
+    "https://www.who.int/news-room/fact-sheets/detail/infant-and-young-child-feeding",
+    # "data/WHO_RIVM_Infant_Child_Feeding_perplexity.pdf",
+    "data/WHO_RIVM_Infant_Child_Feeding_perplexity.md",
+    "data/netherlands_government_RIVM_guidelines_difference_with_WHO.md"
 ]
+# DOCUMENT_SOURCES = [
+#     "https://www.who.int/news-room/fact-sheets/detail/infant-and-young-child-feeding",
+#     "https://www.who.int/publications/i/item/9789240081864",
+#     "https://iris.who.int/bitstream/handle/10665/373358/9789240081864-eng.pdf",
+#     "https://www.healthcouncil.nl/binaries/healthcouncil/documenten/other/2024/09/17/work-programme-2025/Work-programme-2025-Health-Council-of-the-Netherlands.pdf"
+# ]
 CHUNK_SIZE = 400  # lowering the chunksie from 1000 to 400
 CHUNK_OVERLAP = 80 # lowering overlap 150 to 80
 TOP_K_RESULTS = 10
@@ -147,10 +156,19 @@ NO_DOCS_FOUND = "I couldn't retrieve relevant context from the knowledge base."
 # last implementation -> extend the template: Tighten the prompt (ban lists/markdown)
 # Solution ->discovered that the model was mentioning strategies, programs, training, or 'WHO' so controlling that
 # Recommendation 2: Add a separate prompt for summarization
+# SUMMARY_PROMPT_TEMPLATE = (
+#     f"You are a concise, factual assistant. Use ONLY the context provided to answer the question.\n"
+#     f"If the answer is not in the context, reply exactly: Not in knowledge base.\n"
+#     "Provide a bulleted list of the key points that directly answer the question.\n"
+#     f"Your entire answer must be <= {MAX_CHAR_LEN_RESP} characters.\n\n"
+#     "Context:\n{context}\n\nQuestion:\n{question}\n\n"
+#     f"Answer (<={MAX_CHAR_LEN_RESP} chars):"
+# )
 SUMMARY_PROMPT_TEMPLATE = (
     f"You are a concise, factual assistant. Use ONLY the context provided to answer the question.\n"
     f"If the answer is not in the context, reply exactly: Not in knowledge base.\n"
-    "Provide a bulleted list of the key points that directly answer the question.\n"
+    "Reply as plain sentences. No bullets, numbering, markdown, or quotes.\n\n"
+    "Provide a LIST of the key points that directly answer the question.\n\n"
     f"Your entire answer must be <= {MAX_CHAR_LEN_RESP} characters.\n\n"
     "Context:\n{context}\n\nQuestion:\n{question}\n\n"
     f"Answer (<={MAX_CHAR_LEN_RESP} chars):"
@@ -192,6 +210,6 @@ COMPRESSION_MAX_SENTENCE_CHARS = 240   # cap each evidence sentence
 COMPRESSION_TOPK = 8                   # keep top-N evidence lines
 
 # --- Retrieval (MMR) ---
-RETRIEVAL_FETCH_K = 50                 # broaden candidates for MMR
+RETRIEVAL_FETCH_K = 80                # broaden candidates for MMR
 RETRIEVAL_TOP_K = TOP_K_RESULTS        # final k (you already control this)
 RETRIEVAL_LAMBDA_MULT = 0.4            # 0=more diversity, 1=more relevance

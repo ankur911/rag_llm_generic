@@ -24,8 +24,14 @@ if __name__ == "__main__":
 
     if len(sys.argv) > 1 and sys.argv[1] == "plan-a":
         print("\n--- PLAN-A: Direct RAG test ---")
-        query = "List key WHO recommendations for infant and young child feeding."
+        # query = "List key WHO recommendations for infant and young child feeding."
+        # query = "Summarize Recommendations from RIVM (Netherlands)?"
+        query = "Any measurable target set by dutch government in the national health plans?"
+        import time  # Added for timing
+        start = time.time()
         result = retrieve_and_generate(manager, llm, query, return_context=True)
+        end = time.time()
+        print(f"Query run time: {end - start:.2f} seconds")
         print(f"Query: {query}")
         print(f"Answer: {result['answer']}")
         print(f"Sources: {result['sources']}")

@@ -68,7 +68,17 @@ class VectorStoreManager:
                 return None
             # Return a list of Document objects as a loader shim
             return [Document(page_content=text.strip(), metadata={"source": source})]
-
+        
+        # --- Optional: Support for generic text formats (.md, .csv, .txt, etc.) ---
+        if source.lower().endswith((".md", ".csv", ".txt")) and "://" not in source:
+            try:
+                with open(source, "r", encoding="utf-8") as f:
+                    text = f.read()
+                if text.strip():
+                    return [Document(page_content=text.strip(), metadata={"source": source})]
+            except Exception as e:
+                logging.error(f"Failed to load text file {source}: {e}")
+                return None
         logging.warning(f"No loader available for source: {source}")
         return None
 
@@ -93,6 +103,16 @@ class VectorStoreManager:
         if not docs:
             logging.error("No documents were loaded. Vector store not built.")
             return False
+        # --- Optional: Deduplicate documents by exact text match ---
+        deduped_docs = []
+        seen_texts = set()
+        for doc in docs:
+            text = doc.page_content.strip()
+            if text and text not in seen_texts:
+                deduped_docs.append(doc)
+                seen_texts.add(text)
+        docs = deduped_docs
+        logging.info(f"Deduplicated to {len(docs)} unique docs.")
 
         splitter = RecursiveCharacterTextSplitter(
             chunk_size=CHUNK_SIZE,
